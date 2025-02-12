@@ -6,7 +6,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 1000 }, // Gravity for runner
-            debug: false
+            debug: true
         }
     },
     scene: [Load, Play, GameOver] // Define game scenes

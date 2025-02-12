@@ -4,7 +4,7 @@ class Play extends Phaser.Scene {
     }
 
     create() {
-        this.bg = this.add.tileSprite(400, 300, 800, 600, 'background'); 
+        this.bg = this.add.tileSprite(400, 300, 800, 600, 'background');
         this.ground = this.physics.add.sprite(400, 900, 'ground').setImmovable(true);
         this.ground.body.allowGravity = false;
 
@@ -12,19 +12,26 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.player, this.ground);
 
         this.cursors = this.input.keyboard.createCursorKeys();
+        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.keyFIRE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
 
         this.obstacles = this.physics.add.group();
-        this.time.addEvent({ delay: 2000, callback: this.spawnObstacle, callbackScope: this, loop: true });
+        this.bullets = this.physics.add.group();
 
         this.physics.add.collider(this.player, this.obstacles, this.gameOver, null, this);
-        
-        this.bgSpeed = 2
-        this.maxSpeed = 10
-        this.speedIncreaseRate = (this.maxSpeed - this.bgSpeed) / 30; //speed increase per second
-        this.elapsedTime = 0
-        
-        this.obstacleSpeed = -200
-        this.maxObstacleSpeed = -1000
+        this.physics.add.collider(this.bullets, this.obstacles, this.bulletHitObstacle, null, this);
+
+        this.time.addEvent({ delay: 2000, callback: this.spawnObstacle, callbackScope: this, loop: true });
+
+        this.bgSpeed = 2;
+        this.maxSpeed = 10;
+        this.speedIncreaseRate = (this.maxSpeed - this.bgSpeed) / 30;
+        this.elapsedTime = 0;
+        this.obstacleSpeed = -200;
+        this.maxObstacleSpeed = -1000;
+
+        keyFIRE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F)
+
     }
 
     update(time, delta) {
@@ -54,6 +61,9 @@ class Play extends Phaser.Scene {
             this.player.setVelocityY(-1000);
         }
 
+        if (Phaser.Input.Keyboard.JustDown(keyFIRE)) {
+            this.shootBullet();
+        }
     }
 
     spawnObstacle() {
@@ -62,10 +72,27 @@ class Play extends Phaser.Scene {
         obstacle.setVelocityX(this.obstacleSpeed);
         obstacle.setImmovable(true);
         obstacle.body.allowGravity = false
+        obstacle.health = 30
+    }
+
+    shootBullet() {
+        let bullet = this.bullets.create(this.player.x + 20, this.player.y, 'bullet');
+        bullet.setVelocityX(400);
+        bullet.setImmovable(true);
+        bullet.body.allowGravity = false;
+        bullet.damage = 10;
+    }
+
+    bulletHitObstacle(bullet, obstacle) {
+        obstacle.health -= bullet.damage;
+        bullet.destroy();
+        if (obstacle.health <= 0) {
+            obstacle.destroy();
+        }
     }
 
     hitObstacle(player, obstacle) {
-        obstacle.destroy(); // Destroy obstacle on collision
+        obstacle.destroy(); //Destroy obstacle on collision
     }
 
 
