@@ -1,4 +1,3 @@
-
 const config = {
     type: Phaser.AUTO,
     width: 800, // Adjust screen size
