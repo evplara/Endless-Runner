@@ -13,18 +13,28 @@ class Play extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
         keyFIRE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-        this.obstacles = this.physics.add.group();
-        this.bullets = this.physics.add.group();
-        this.weakSpots = this.physics.add.group();
+        this.playerHealth = 3
+        this.healthText = this.add.text(160, 0, 'Health: 3', { fontSize: '28px', fill: '#fff', color: '#FFF', backgroundColor:'#000' });
 
+        this.obstacles = this.physics.add.group()
+        this.bullets = this.physics.add.group()
+        this.weakSpots = this.physics.add.group()
+        this.powerUps = this.physics.add.group()
 
-        this.physics.add.collider(this.player, this.obstacles, this.gameOver, null, this);
-        this.physics.add.collider(this.bullets, this.weakSpots, this.bulletHitWeakSpot, null, this);
+        //player obstacle collision
+        this.physics.add.collider(this.player, this.obstacles, this.playerHit, null, this)
+        //bullet weakspot collision
+        this.physics.add.collider(this.bullets, this.weakSpots, this.bulletHitWeakSpot, null, this)
+        //player powerup collision
+        this.physics.add.overlap(this.player, this.powerUps, this.collectPowerUp, null, this);
 
+        //randomly spawn powerups
+        this.time.addEvent({ delay: Phaser.Math.Between(500, 1000), callback: this.spawnPowerUp, callbackScope: this, loop: true })
+        //randomly spawn obstacles
         this.time.addEvent({ delay: 2000, callback: this.spawnObstacle, callbackScope: this, loop: true });
 
         this.bgSpeed = 2;
-        this.maxSpeed = 1000;
+        this.maxSpeed = 50;
         this.speedIncreaseRate = (this.maxSpeed - this.bgSpeed) / 3000;
         this.elapsedTime = 0;
         this.obstacleSpeed = -100;
@@ -60,7 +70,7 @@ class Play extends Phaser.Scene {
 
         //increase speed gradually over 60 seconds
         if (this.elapsedTime < 60000) {
-            this.bgSpeed += (this.speedIncreaseRate * (delta / 10000)); // Adjust based on delta time
+            this.bgSpeed += (this.speedIncreaseRate * (delta / 1000)); // Adjust based on delta time
             this.elapsedTime += delta;
             this.obstacleSpeed = Phaser.Math.Linear(-200, this.maxObstacleSpeed, this.elapsedTime / 60000)
         } else {
@@ -81,6 +91,12 @@ class Play extends Phaser.Scene {
                 weakSpot.setPosition(weakSpot.parentObstacle.x, weakSpot.parentObstacle.y);
             }
         });
+
+        this.obstacles.children.iterate(obstacle => {
+            if (obstacle && obstacle.x <= 0) {
+                this.gameOver(); 
+            }
+        });
     }
 
     spawnObstacle() {
@@ -95,7 +111,7 @@ class Play extends Phaser.Scene {
     obstacle.body.setSize(obstacle.width, obstacle.height * randomHeightScale, true)
 
     // Define weak point
-    let weakSpot = this.physics.add.sprite(obstacle.x, obstacle.y, 'weakspot');
+    let weakSpot = this.physics.add.sprite(obstacle.x, obstacle.y, 'weakspot')
     weakSpot.setDisplaySize(50, 20); // Adjust size
     weakSpot.allowGravity = false;
     weakSpot.setImmovable(true);
@@ -105,8 +121,21 @@ class Play extends Phaser.Scene {
     // Add weakSpot to a group
     this.weakSpots.add(weakSpot);
 
-    // this.physics.add.collider(this.bullets, weakSpot, this.bulletHitObstacle, null, this)
     }
+    spawnPowerUp() {
+        let yPosition = Phaser.Math.Between(50, 550); //random Y position
+        let powerUp = this.powerUps.create(800, yPosition, 'heart'); //spawn at right side
+    
+        powerUp.setVelocityX(this.obstacleSpeed); //same movement logic as obstacles 
+        powerUp.setImmovable(true);
+        powerUp.body.allowGravity = false;
+    }
+    collectPowerUp(player, powerUp) {
+        this.playerHealth += 1
+        this.healthText.setText('Health: ' + this.playerHealth); //update UI
+        powerUp.destroy()
+    }
+    
 
     shootBullet() {
         let bullet = this.bullets.create(this.player.x + 20, this.player.y, 'bullet');
@@ -116,21 +145,6 @@ class Play extends Phaser.Scene {
         bullet.damage = 10;
     }
 
-    // bulletHitObstacle(bullet, weakSpot) {
-    //     let obstacle = weakSpot.parentObstacle; // Retrieve the parent obstacle
-    //     if (obstacle) {
-    //         obstacle.health -= bullet.damage;
-    //         bullet.destroy();
-    //         if (obstacle.health <= 0) {
-    //             obstacle.destroy();
-    //             weakSpot.destroy();
-    //         }
-    //     }
-    // }
-
-    // hitObstacle(player, obstacle) {
-    //     obstacle.destroy(); //Destroy obstacle on collision
-    // }
     
     
 
@@ -147,18 +161,27 @@ class Play extends Phaser.Scene {
     }
 
     updateTimer() {
-       
             this.remainingTime += 100;
-            this.timerText.setText(`Time: ${(this.remainingTime / 1000).toFixed(1)}`);
-
-            // if (this.remainingTime <= 0) {
-            //     this.timerEvent.remove();
-			// 	this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER').setOrigin(0.5)
-			// 	this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or ← for Menu').setOrigin(0.5)   
-			// 	this.gameOver = true;
-            // }
-        
+            this.timerText.setText(`Time: ${(this.remainingTime / 1000).toFixed(1)}`);        
     }
+    playerHit(player, obstacle) {
+        this.playerHealth -= 1; 
+        this.healthText.setText('Health: ' + this.playerHealth); 
+    
+        this.weakSpots.children.iterate(weakSpot => {
+            if (weakSpot && weakSpot.parentObstacle === obstacle) {
+                weakSpot.destroy(); //destroy only if a valid weakSpot is found
+            }
+        });
+    
+        obstacle.destroy(); 
+        if (this.playerHealth <= 0) {
+            this.gameOver(); 
+        }
+    }
+    
+    
+    
     gameOver() {
         this.scene.start('GameOver');
     }
