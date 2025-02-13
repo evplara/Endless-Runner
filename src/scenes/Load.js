@@ -12,5 +12,8 @@ class Load extends Phaser.Scene {
 
     create() {
         this.scene.start('Play');
+		game.settings = {
+			gameTimer: 0
+		}
     }
 }

@@ -5,7 +5,7 @@ const config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 1000 }, // Gravity for runner
+            gravity: { y: 0 }, // Gravity for runner
             debug: true
         }
     },
