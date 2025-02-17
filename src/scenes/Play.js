@@ -29,7 +29,7 @@ class Play extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.powerUps, this.collectPowerUp, null, this);
 
         //randomly spawn powerups
-        this.time.addEvent({ delay: Phaser.Math.Between(500, 1000), callback: this.spawnPowerUp, callbackScope: this, loop: true })
+        this.time.addEvent({ delay: Phaser.Math.Between(5000, 10000), callback: this.spawnPowerUp, callbackScope: this, loop: true })
         //randomly spawn obstacles
         this.time.addEvent({ delay: 2000, callback: this.spawnObstacle, callbackScope: this, loop: true });
 
@@ -38,7 +38,7 @@ class Play extends Phaser.Scene {
         this.speedIncreaseRate = (this.maxSpeed - this.bgSpeed) / 3000;
         this.elapsedTime = 0;
         this.obstacleSpeed = -100;
-        this.maxObstacleSpeed = -2000;
+        this.maxObstacleSpeed = -1000;
 
         this.remainingTime = game.settings.gameTimer; // Start with the configured timer value
         this.timerText = this.add.text(
@@ -69,10 +69,10 @@ class Play extends Phaser.Scene {
         this.bg.tilePositionX += this.bgSpeed
 
         //increase speed gradually over 60 seconds
-        if (this.elapsedTime < 60000) {
-            this.bgSpeed += (this.speedIncreaseRate * (delta / 1000)); // Adjust based on delta time
+        if (this.elapsedTime < 80000) {
+            this.bgSpeed += (this.speedIncreaseRate * (delta / 1000)) // Adjust based on delta time
             this.elapsedTime += delta;
-            this.obstacleSpeed = Phaser.Math.Linear(-200, this.maxObstacleSpeed, this.elapsedTime / 60000)
+            this.obstacleSpeed = Phaser.Math.Linear(-100, this.maxObstacleSpeed, this.elapsedTime / 160000)
         } else {
             this.bgSpeed = this.maxSpeed; //cap at max speed
             this.obstacleSpeed = this.maxObstacleSpeed
@@ -126,7 +126,7 @@ class Play extends Phaser.Scene {
         let yPosition = Phaser.Math.Between(50, 550); //random Y position
         let powerUp = this.powerUps.create(800, yPosition, 'heart'); //spawn at right side
     
-        powerUp.setVelocityX(this.obstacleSpeed); //same movement logic as obstacles 
+        powerUp.setVelocityX(-300); //same movement logic as obstacles 
         powerUp.setImmovable(true);
         powerUp.body.allowGravity = false;
     }

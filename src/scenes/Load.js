@@ -12,9 +12,10 @@ class Load extends Phaser.Scene {
     }
 
     create() {
-        this.scene.start('Play');
-		game.settings = {
+        this.scene.start('StartScreen');
+        game.settings = {
 			gameTimer: 0
 		}
+		
     }
 }

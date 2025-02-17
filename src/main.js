@@ -9,7 +9,7 @@ const config = {
             debug: true
         }
     },
-    scene: [Load, Play, GameOver] // Define game scenes
+    scene: [Load,StartScreen, Play, GameOver] // Define game scenes
 };
 
 const game = new Phaser.Game(config);
