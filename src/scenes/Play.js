@@ -1,3 +1,8 @@
+//credits Music from #Uppbeat: https://uppbeat.io/t/fass/furious
+//credits crash.mp3Car Accident with Squeal and CrashHoBoTrails (Freesound) https://pixabay.com/sound-effects/car-accident-with-squeal-and-crash-6054/
+//credits pew sound https://www.myinstants.com/en/instant/pew-roblox-32521/?utm_source=copy&utm_medium=share 
+//credits beep sound CountDown Beep youioo8 (Freesound) https://pixabay.com/sound-effects/countdown-beep-104007/
+
 class Play extends Phaser.Scene {
     constructor() {
         super({ key: 'Play' });
@@ -20,6 +25,9 @@ class Play extends Phaser.Scene {
         this.bullets = this.physics.add.group()
         this.weakSpots = this.physics.add.group()
         this.powerUps = this.physics.add.group()
+        this.pewSound = this.sound.add('pew')
+        this.bgSound = this.sound.add('bgMusic', { volume: 0.2 })
+
 
         //player obstacle collision
         this.physics.add.collider(this.player, this.obstacles, this.playerHit, null, this)
@@ -61,6 +69,8 @@ class Play extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+        this.bgSound.play()
+        this.crashSound = this.sound.add('crash')
     }
 
     update(time, delta) {
@@ -143,6 +153,8 @@ class Play extends Phaser.Scene {
         bullet.setImmovable(true);
         bullet.body.allowGravity = false;
         bullet.damage = 10;
+
+        this.pewSound.play()
     }
 
     
@@ -183,7 +195,10 @@ class Play extends Phaser.Scene {
     
     
     gameOver() {
+        this.crashSound.play()
         this.scene.start('GameOver');
+        this.sound.get('bgMusic').stop()
+
     }
 
 }

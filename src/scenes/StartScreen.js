@@ -4,11 +4,12 @@ class StartScreen extends Phaser.Scene {
     }
 
     create() {
+        this.beepSound = this.sound.add('beep')
         // Game Title
-        this.add.text(250, 150, 'Endless Runner Shooter', { fontSize: '32px', fill: '#fff' });
+        this.add.text(150, 150, 'Endless Runner Shooter', { fontSize: '32px', fill: '#fff' });
 
         // Instructions
-        this.add.text(200, 220, 'Dodge obstacles and shoot their weakpoint to survive!', { fontSize: '20px', fill: '#fff' });
+        this.add.text(100, 220, 'Dodge obstacles and shoot their weakpoint to survive!\n Do not let the obstacles reach the end of the screen!', { fontSize: '20px', fill: '#fff' });
 
         // Controls
         this.add.text(250, 280, 'Controls:', { fontSize: '24px', fill: '#ff0' });
@@ -20,7 +21,8 @@ class StartScreen extends Phaser.Scene {
 
         // Start game on space key press
         this.input.keyboard.once('keydown-SPACE', () => {
-            this.scene.start('Play'); // ✅ Start the game when SPACE is pressed
+            this.beepSound.play()
+            this.scene.start('Play') //start the game when SPACE is pressed
         });
 		
     }
