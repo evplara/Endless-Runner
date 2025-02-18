@@ -5,10 +5,11 @@ class Load extends Phaser.Scene {
 
     preload() {
         this.load.image('background', 'assets/background.png')
-        this.load.spritesheet('player', 'assets/player.png', { frameWidth: 50, frameHeight: 50 })
+        this.load.spritesheet('player', 'assets/player.png', { frameWidth: 80, frameHeight: 80 })
         this.load.image('ground', 'assets/ground.png', )
         this.load.image('obstacle', 'assets/obstacle.png',{ frameWidth: 10, frameHeight: 10 })
 		this.load.image('heart', 'assets/heart.png')
+        this.load.image('bullet', 'assets/bullet.png')
         this.load.audio('pew', 'assets/pew.mp3')
         this.load.audio('beep', 'assets/beep.mp3')
         this.load.audio('bgMusic', 'assets/bgMusic.mp3')

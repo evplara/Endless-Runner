@@ -9,7 +9,7 @@ class StartScreen extends Phaser.Scene {
         this.add.text(150, 150, 'Endless Runner Shooter', { fontSize: '32px', fill: '#fff' });
 
         // Instructions
-        this.add.text(100, 220, 'Dodge obstacles and shoot their weakpoint to survive!\n Do not let the obstacles reach the end of the screen!', { fontSize: '20px', fill: '#fff' });
+        this.add.text(100, 220, 'Dodge the Eye of RAH and shoot its eye to survive!\n Do not let RAH reach the end of the screen!', { fontSize: '20px', fill: '#fff' });
 
         // Controls
         this.add.text(250, 280, 'Controls:', { fontSize: '24px', fill: '#ff0' });

@@ -2,7 +2,7 @@
 //credits crash.mp3Car Accident with Squeal and CrashHoBoTrails (Freesound) https://pixabay.com/sound-effects/car-accident-with-squeal-and-crash-6054/
 //credits pew sound https://www.myinstants.com/en/instant/pew-roblox-32521/?utm_source=copy&utm_medium=share 
 //credits beep sound CountDown Beep youioo8 (Freesound) https://pixabay.com/sound-effects/countdown-beep-104007/
-
+//obstacle object made using https://giventofly.github.io/pixelit/#tryit
 class Play extends Phaser.Scene {
     constructor() {
         super({ key: 'Play' });
@@ -10,11 +10,10 @@ class Play extends Phaser.Scene {
 
     create() {
         this.bg = this.add.tileSprite(400, 300, 800, 600, 'background');
-        this.ground = this.physics.add.sprite(400, 900, 'ground').setImmovable(true);
-        this.ground.body.allowGravity = false;
 
         this.player = this.physics.add.sprite(100, 450, 'player').setCollideWorldBounds(true);
-
+        this.player.setScale(1)
+        this.player.body.setSize(50,50)
         this.cursors = this.input.keyboard.createCursorKeys();
         keyFIRE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
@@ -41,7 +40,7 @@ class Play extends Phaser.Scene {
         //randomly spawn obstacles
         this.time.addEvent({ delay: 2000, callback: this.spawnObstacle, callbackScope: this, loop: true });
 
-        this.bgSpeed = 2;
+        this.bgSpeed = 5;
         this.maxSpeed = 50;
         this.speedIncreaseRate = (this.maxSpeed - this.bgSpeed) / 3000;
         this.elapsedTime = 0;
@@ -50,7 +49,7 @@ class Play extends Phaser.Scene {
 
         this.remainingTime = game.settings.gameTimer; // Start with the configured timer value
         this.timerText = this.add.text(
-			0, // Adjusted x-coordinate
+			0,
 			0,
 			`Time: ${(this.remainingTime / 1000).toFixed(1)}`,
 			{
@@ -79,10 +78,10 @@ class Play extends Phaser.Scene {
         this.bg.tilePositionX += this.bgSpeed
 
         //increase speed gradually over 60 seconds
-        if (this.elapsedTime < 80000) {
-            this.bgSpeed += (this.speedIncreaseRate * (delta / 1000)) // Adjust based on delta time
+        if (this.elapsedTime < 120000) {
+            this.bgSpeed += (this.speedIncreaseRate * (delta / 100)) // Adjust based on delta time
             this.elapsedTime += delta;
-            this.obstacleSpeed = Phaser.Math.Linear(-100, this.maxObstacleSpeed, this.elapsedTime / 160000)
+            this.obstacleSpeed = Phaser.Math.Linear(-100, this.maxObstacleSpeed, this.elapsedTime / 120000)
         } else {
             this.bgSpeed = this.maxSpeed; //cap at max speed
             this.obstacleSpeed = this.maxObstacleSpeed
@@ -112,17 +111,18 @@ class Play extends Phaser.Scene {
     spawnObstacle() {
     let yPosition = Phaser.Math.Between(10, 500);
     let obstacle = this.obstacles.create(800, yPosition, 'obstacle');
+
     obstacle.setVelocityX(this.obstacleSpeed);
     obstacle.setImmovable(true);
     obstacle.body.allowGravity = false;
-    let randomHeightScale = Phaser.Math.FloatBetween(1, 3); // Adjust range as needed
+    let randomHeightScale = Phaser.Math.FloatBetween(0.1, 1); // Adjust range as needed
     obstacle.setScale(1, randomHeightScale); // Keep width 1, modify height scale
 
     obstacle.body.setSize(obstacle.width, obstacle.height * randomHeightScale, true)
 
     // Define weak point
     let weakSpot = this.physics.add.sprite(obstacle.x, obstacle.y, 'weakspot')
-    weakSpot.setDisplaySize(50, 20); // Adjust size
+    weakSpot.setDisplaySize(50, 40); // Adjust size
     weakSpot.allowGravity = false;
     weakSpot.setImmovable(true);
     // weakSpot.body.moves = false
@@ -148,7 +148,8 @@ class Play extends Phaser.Scene {
     
 
     shootBullet() {
-        let bullet = this.bullets.create(this.player.x + 20, this.player.y, 'bullet');
+        let bullet = this.bullets.create(this.player.x + 20, this.player.y, 'bullet')
+        bullet.setScale(2)
         bullet.setVelocityX(400);
         bullet.setImmovable(true);
         bullet.body.allowGravity = false;
