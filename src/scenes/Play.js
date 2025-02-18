@@ -1,8 +1,4 @@
-//credits Music from #Uppbeat: https://uppbeat.io/t/fass/furious
-//credits crash.mp3Car Accident with Squeal and CrashHoBoTrails (Freesound) https://pixabay.com/sound-effects/car-accident-with-squeal-and-crash-6054/
-//credits pew sound https://www.myinstants.com/en/instant/pew-roblox-32521/?utm_source=copy&utm_medium=share 
-//credits beep sound CountDown Beep youioo8 (Freesound) https://pixabay.com/sound-effects/countdown-beep-104007/
-//obstacle object made using https://giventofly.github.io/pixelit/#tryit
+
 class Play extends Phaser.Scene {
     constructor() {
         super({ key: 'Play' });
